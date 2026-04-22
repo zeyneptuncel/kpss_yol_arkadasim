@@ -44,21 +44,27 @@ $pp_yol = ($user_info['profil_foto'] != 'default_pp.png' && file_exists('uploads
 
 // --- MOTİVASYON SÖZLERİ SİSTEMİ ---
 $motivasyon_sozleri = [
-    ["soz" => "Başarı, her gün tekrarlanan küçük çabaların toplamıdır.", "yazar" => "Robert Collier"],
-    ["soz" => "Gelecek, bugünden hazırlananlara aittir.", "yazar" => "Malcolm X"],
-    ["soz" => "Zorluklar, başarının değerini artıran süslerdir.", "yazar" => "Moliere"],
+    // Türk Büyükleri ve Klasikler
+    ["soz" => "Umutsuz durumlar yoktur, umutsuz insanlar vardır. Ben hiçbir zaman umudumu yitirmedim.", "yazar" => "Mustafa Kemal Atatürk"],
+    ["soz" => "Vatanını en çok seven, görevini en iyi yapandır. Şimdi çalışma zamanı!", "yazar" => "Mustafa Kemal Atatürk"],
     ["soz" => "Hiç kimse başarı merdivenlerini elleri cebinde tırmanmamıştır.", "yazar" => "Konfüçyüs"],
-    ["soz" => "Yarınlar yorgun ve bezgin kimselere değil, rahatını terk edebilen gayretli insanlara aittir.", "yazar" => "Cicero"],
-    ["soz" => "Sadece çok ileri gitme riskini alanlar ne kadar ileri gidebileceğini görür.", "yazar" => "T.S. Eliot"],
-    ["soz" => "En büyük zayıflığımız pes etmektir. Başarmanın en kesin yolu her zaman bir kez daha denemektir.", "yazar" => "Thomas Edison"],
-    ["soz" => "Yapabileceğinize inanın, yolun yarısını çoktan geçtiniz demektir.", "yazar" => "Theodore Roosevelt"],
-    ["soz" => "Okumak bir insanı doldurur, konuşmak hazırlar, yazmak ise olgunlaştırır.", "yazar" => "Francis Bacon"],
-    ["soz" => "Hayatını bugün değiştir. Gelecek üzerine kumar oynama, ertelemeden şimdi harekete geç.", "yazar" => "Simone de Beauvoir"],
-    ["soz" => "Disiplin, hedefler ile başarı arasındaki köprüdür.", "yazar" => "Jim Rohn"],
-    ["soz" => "Bilgiye yapılan yatırım en yüksek faizi getirir.", "yazar" => "Benjamin Franklin"],
-    ["soz" => "Yorulunca dinlenmeyi öğren, bırakmayı değil.", "yazar" => "Banksy"],
-    ["soz" => "Dahilik, %1 yetenek ve %99 alın terinden oluşur.", "yazar" => "Thomas Edison"],
-    ["soz" => "Başkalarından daha akıllı olmak zorunda değilsiniz, başkalarından daha disiplinli olmanız yeterli.", "yazar" => "Warren Buffett"]
+    ["soz" => "Gelecek, bugünden hazırlananlara aittir.", "yazar" => "Malcolm X"],
+    ["soz" => "Mermeri delen suyun gücü değil, damlaların sürekliliğidir. İstikrarını bozma!", "yazar" => "Latin Atasözü"],
+    
+    // Yabancı Sözler (Anlamlı Çevirilerle)
+    ["soz" => "It always seems impossible until it's done. (Bitirilene kadar her şey imkansız görünür.)", "yazar" => "Nelson Mandela"],
+    ["soz" => "Don’t stop when you’re tired. Stop when you’re done. (Yorulduğunda değil, başardığında dur.)", "yazar" => "David Goggins"],
+    ["soz" => "The best way to predict your future is to create it. (Geleceği tahmin etmenin en iyi yolu, onu inşa etmektir.)", "yazar" => "Abraham Lincoln"],
+    ["soz" => "Success is not final, failure is not fatal: it is the courage to continue that counts. (Başarı son değildir, başarısızlık da ölümcül değil. Önemli olan devam etme cesaretidir.)", "yazar" => "Winston Churchill"],
+    ["soz" => "Great things never come from comfort zones. (Büyük başarılar asla konfor alanlarından çıkmaz.)", "yazar" => "Anonim"],
+    ["soz" => "Action is the foundational key to all success. (Eylem, tüm başarıların temel anahtarıdır. Haydi kalk ve başla!)", "yazar" => "Pablo Picasso"],
+    
+    // Sınav Odaklı ve Samimi
+    ["soz" => "Bugün yaptığın fedakarlıklar, yarın yaşayacağın hayatın bedelidir. Zeynep, pes etme!", "yazar" => "Yol Arkadaşın ✨"],
+    ["soz" => "Sakin kıyılar hiçbir zaman usta bir kaptan yetiştirmez. Bu zorluklar seni güçlendiriyor.", "yazar" => "İçindeki Güç 🔥"],
+    ["soz" => "Dünya senin ne yapabildiğini görmek için sabırsızlanıyor. O masadan şampiyon çıkacaksın.", "yazar" => "Zeynep'in Hedefleri 🎯"],
+    ["soz" => "Küçük başlangıçlar büyük sonuçlar doğurur. Sadece bugünü kurtar, yarın zaten gelecek.", "yazar" => "Disiplin Günü 🧠"],
+    ["soz" => "Yorulunca dinlenmeyi öğren, bırakmayı değil. Yolun sonundaki ışığa az kaldı!", "yazar" => "Motivasyon Köşesi"]
 ];
 
 $gunun_indeksi = date('z') % count($motivasyon_sozleri); 
@@ -223,8 +229,8 @@ $kpss_mufredat = [
         <div class="user-widget" onclick="window.location.href='profil.php'">
             <img src="<?= $pp_yol ?>" alt="Profil">
             <div class="user-info-sidebar">
-                <span style="font-weight: bold; font-size: 14px; color: #fff;"><?= htmlspecialchars($gorunen_isim); ?></span>
-                <span style="font-size: 11px; color: #d4b3ff; margin-top:3px;"><?= htmlspecialchars($user['sinav_tipi'] ?? 'Ortaöğretim'); ?></span>
+                <span class="u-name"><?= htmlspecialchars($gorunen_isim); ?></span>
+                <span class="u-badge"><?= htmlspecialchars($user_info['sinav_tipi'] ?? 'Lisans'); ?></span>
             </div>
         </div>
 
@@ -348,7 +354,6 @@ $kpss_mufredat = [
         function generateCalendar() {
             const wrapper = document.getElementById('calendar-wrapper');
             const today = new Date(); 
-            // Yerel saat dilimi ayarı (Gece yarısı hatalarını engeller)
             const offset = today.getTimezoneOffset() * 60000;
             const todayStr = (new Date(today - offset)).toISOString().split('T')[0];
             const days = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
@@ -363,7 +368,6 @@ $kpss_mufredat = [
                 let isWorked = activeDates.includes(dateStr);
                 let icon = isWorked ? '🔥' : (isToday ? '🔥' : '—');
                 
-                // MANTIK: Sadece Şık Pop-up Açılır (Alert YOK)
                 let clickAction = '';
                 if (!isToday && !isWorked) {
                     clickAction = `onclick="openStreakModal('past', '${dateStr}')"`;
@@ -379,7 +383,6 @@ $kpss_mufredat = [
             }
         }
         
-        // ŞIK POP-UP (MODAL) YÖNETİCİSİ
         function openStreakModal(type, dateStr) {
             const title = document.getElementById('streak-title');
             const desc = document.getElementById('streak-desc');
@@ -419,7 +422,6 @@ $kpss_mufredat = [
             document.getElementById('streakModal').classList.add('active');
         }
 
-        // Form Gönderme
         function submitStreak(action) {
             document.getElementById('streak-action-input').value = action;
             document.getElementById('streak-form').submit();
@@ -469,13 +471,7 @@ $kpss_mufredat = [
 
         function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
         function toggleAccordion(btn) { let panel = btn.nextElementSibling; panel.style.display = (panel.style.display === "block") ? "none" : "block"; }
-        
-        window.onclick = function(event) { 
-            if (event.target.classList.contains('modal-overlay')) {
-                event.target.classList.remove('active'); 
-            }
-        }
-        
+        window.onclick = function(event) { if (event.target.classList.contains('modal-overlay')) { event.target.classList.remove('active'); } }
         updateAllBars();
     </script>
 </body>

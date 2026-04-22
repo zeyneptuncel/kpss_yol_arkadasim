@@ -303,7 +303,7 @@ $pastel_renkler = [
 
         <div class="nav-menu">
             <a href="dashboard.php" class="nav-item"><span>🏠</span> Ana Sayfa</a>
-            <a href="pomodoro.php" class="nav-item"><span>🍅</span> Odak & Skor</a>
+            <a href="pomodoro.php" class="nav-item"><span>🍅</span> Pomodoro & Skor</a>
             <a href="tekrar.php" class="nav-item active"><span>⚠️</span> Tekrar Duvarı</a>
             <a href="logout.php" class="nav-item" style="color: #e74c3c; margin-top: 10px;"><span>🚪</span> Çıkış Yap</a>
         </div>
