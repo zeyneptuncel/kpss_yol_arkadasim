@@ -11,6 +11,11 @@ $uid = $_SESSION['user_id'];
 $mesaj = "";
 $mesaj_turu = "";
 
+// Şifre modalı için özel değişkenler
+$sifre_mesaj = "";
+$sifre_mesaj_turu = "";
+$show_password_modal = false; // Varsayılan olarak kapalı
+
 // --- 1. KULLANICI BİLGİLERİNİ GÜNCELLEME İŞLEMİ ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['guncelle_btn'])) {
     $yeni_isim = trim($_POST['isim']);
@@ -46,9 +51,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['guncelle_btn'])) {
 
         if ($basarili) {
             $_SESSION['username'] = $yeni_username; $_SESSION['isim'] = $yeni_isim; 
-            $mesaj = "Bilgilerin başarıyla güncellendi aşkım!"; $mesaj_turu = "success";
+            $mesaj = "Bilgilerin başarıyla güncellendi!"; $mesaj_turu = "success";
         } else {
             $mesaj = "Güncelleme sırasında bir hata oluştu."; $mesaj_turu = "error";
+        }
+    }
+}
+
+// --- ŞİFRE DEĞİŞTİRME İŞLEMİ (GELİŞMİŞ HATA YAKALAMA VE MODAL KONTROLÜ) ---
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['sifre_degistir_btn'])) {
+    
+    // GÖNDERİM YAPILDIĞI AN MODALI AÇIK TUTMA SİNYALİ VERİYORUZ
+    $show_password_modal = true; 
+    
+    $eski_sifre = $_POST['eski_sifre'];
+    $yeni_sifre = $_POST['yeni_sifre'];
+    $yeni_sifre_tekrar = $_POST['yeni_sifre_tekrar'];
+
+    $sifre_kontrol = $db->prepare("SELECT password FROM users WHERE id = ?");
+    $sifre_kontrol->execute([$uid]);
+    $user_data = $sifre_kontrol->fetch(PDO::FETCH_ASSOC);
+
+    if (!password_verify($eski_sifre, $user_data['password'])) {
+        $sifre_mesaj = "Mevcut şifrenizi yanlış girdiniz!";
+        $sifre_mesaj_turu = "error";
+    } elseif ($yeni_sifre !== $yeni_sifre_tekrar) {
+        $sifre_mesaj = "Yeni şifreler birbiriyle eşleşmiyor, lütfen kontrol edin.";
+        $sifre_mesaj_turu = "error";
+    } elseif (strlen($yeni_sifre) < 6) {
+        $sifre_mesaj = "Yeni şifreniz güvenliğiniz için en az 6 karakter olmalıdır.";
+        $sifre_mesaj_turu = "error";
+    } elseif (password_verify($yeni_sifre, $user_data['password'])) {
+        $sifre_mesaj = "Yeni şifreniz, eski şifrenizle aynı olamaz.";
+        $sifre_mesaj_turu = "error";
+    } else {
+        $yeni_hash = password_hash($yeni_sifre, PASSWORD_DEFAULT);
+        $guncelle = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
+        if ($guncelle->execute([$yeni_hash, $uid])) {
+            $sifre_mesaj = "Şifreniz başarıyla değiştirildi! 🔒";
+            $sifre_mesaj_turu = "success";
+        } else {
+            $sifre_mesaj = "Şifre güncellenirken sistemsel bir hata oluştu.";
+            $sifre_mesaj_turu = "error";
         }
     }
 }
@@ -84,29 +128,14 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Ayarları - KPSS Yol Arkadaşım</title>
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-<link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0b12; color: #fff; margin: 0; display: flex; min-height: 100vh; overflow-x: hidden;}
         .sidebar { width: 260px; background: rgba(20, 20, 25, 0.95); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 30px 0; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease;}
-.brand {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90px; /* Sihirli dokunuş: Menülerin kaymasını engeller! */
-    margin-bottom: 20px; /* Profil widget'ı ile aradaki sabit boşluk */
-    width: 100%;
-}
-
-.brand img {
-    width: 250px; /* Logoyu kocaman yaptık! */
-    height: auto;
-    object-fit: contain; /* Logonun en-boy oranını bozmadan sığdırır */
-    transition: transform 0.3s ease;
-}
-
-.brand img:hover {
-    transform: scale(1.05); /* Üzerine gelince hafif büyüme efekti */
-}        .user-widget { padding: 15px; margin: 0 20px 30px 20px; background: linear-gradient(90deg, rgba(138,43,226,0.3) 0%, rgba(138,43,226,0.1) 100%); border-radius: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #8a2be2; box-shadow: 0 0 15px rgba(138,43,226,0.2);}
+        .brand { display: flex; justify-content: center; align-items: center; height: 90px; margin-bottom: 20px; width: 100%;}
+        .brand img { width: 250px; height: auto; object-fit: contain; transition: transform 0.3s ease;}
+        .brand img:hover { transform: scale(1.05); }        
+        .user-widget { padding: 15px; margin: 0 20px 30px 20px; background: linear-gradient(90deg, rgba(138,43,226,0.3) 0%, rgba(138,43,226,0.1) 100%); border-radius: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #8a2be2; box-shadow: 0 0 15px rgba(138,43,226,0.2);}
         .user-widget img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #d4b3ff; }
         .user-info-sidebar { display: flex; flex-direction: column; }
         .nav-menu { display: flex; flex-direction: column; gap: 5px; padding: 0 20px; }
@@ -137,14 +166,24 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 18px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-size: 15px; outline: none; transition: 0.3s; box-sizing: border-box;}
         .save-btn { background: linear-gradient(90deg, #6a11cb 0%, #8a2be2 100%); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; width: 100%; box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);}
         .save-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(106, 17, 203, 0.5); }
+        
+        .btn-password { background: rgba(255,255,255,0.05); color: #d4b3ff; border: 1px solid #8a2be2; padding: 14px 40px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 15px;}
+        .btn-password:hover { background: rgba(138,43,226,0.15); color: #fff; }
+
         .danger-zone { margin-top: 40px; padding: 30px; border: 1px dashed rgba(231, 76, 60, 0.4); border-radius: 20px; background: rgba(231, 76, 60, 0.05); text-align: center; max-width: 900px;}
         .delete-btn { background: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .delete-btn:hover { background: #e74c3c; color: #fff; }
 
-        /* --- MODAL CSS RESTORED (EKSİKLER TAMAMLANDI) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-overlay.active { display: flex; }
+        
+        /* Modalın JS Tarafından Açık Tutulmasını Sağlayan Class */
+        .modal-overlay.active { display: flex !important; }
+
         .modal-content { background: #1a1a25; padding: 40px; border-radius: 30px; text-align: center; max-width: 400px; border: 1px solid #e74c3c; box-shadow: 0 0 50px rgba(231,76,60,0.2); }
+        
+        /* Şifre Modalını Genişlettik ve İç Boşluklarını Artırdık */
+        #passwordModal .modal-content { border-color: #8a2be2; box-shadow: 0 0 50px rgba(138,43,226,0.2); text-align: left; width: 90%; max-width: 550px; padding: 50px;}
+
         .modal-icon { font-size: 50px; margin-bottom: 20px; }
         .modal-title { font-size: 24px; color: #fff; margin-bottom: 15px; font-weight: 800; }
         .modal-desc { color: #a09eb5; margin-bottom: 30px; line-height: 1.6; font-size: 15px; }
@@ -158,6 +197,7 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
             .main-content { margin-left: 0; width: 100%; padding: 20px; }
             .profile-card { grid-template-columns: 1fr; padding: 25px; }
             .pp-upload-area { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 30px;}
+            #passwordModal .modal-content { padding: 30px; }
         }
     </style>
 </head>
@@ -165,8 +205,8 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
 
     <div class="sidebar" id="sidebar">
         <div class="brand">
-     <img src="images/dark_logo.png" alt="Logo">
-    </div>
+            <img src="images/dark_logo.png" alt="Logo">
+        </div>
         <div class="user-widget">
             <img src="<?= $pp_yol ?>" alt="Profil">
             <div class="user-info-sidebar">
@@ -220,6 +260,7 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
                         </select>
                     </div>
                     <button type="submit" name="guncelle_btn" class="save-btn">Değişiklikleri Kaydet</button>
+                    <button type="button" class="btn-password" onclick="openPasswordModal()">🔒 Şifremi Değiştir</button>
                 </div>
             </form>
         </div>
@@ -228,6 +269,37 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
             <h4 style="color: #e74c3c; margin: 0 0 10px 0; font-weight: 800;">Hesabı Kapat</h4>
             <p style="color: #a09eb5; font-size: 14px; margin-bottom: 20px;">Tüm verileriniz <b>kalıcı olarak silinecektir.</b></p>
             <button class="delete-btn" onclick="openDeleteModal()">Hesabımı Sil</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay <?= $show_password_modal ? 'active' : '' ?>" id="passwordModal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0; color: #fff; font-size: 24px; text-align: center; margin-bottom: 25px;">🔒 Şifreni Güncelle</h2>
+            
+            <?php if($sifre_mesaj != ""): ?>
+                <div class="alert <?= $sifre_mesaj_turu == 'success' ? 'success' : 'error' ?>" style="padding: 12px; font-size: 14px; margin-bottom: 20px; animation: none;"> 
+                    <?= $sifre_mesaj_turu == 'success' ? '✅' : '⚠️' ?> <?= $sifre_mesaj ?> 
+                </div>
+            <?php endif; ?>
+
+            <form action="profil.php" method="POST">
+                <div class="form-group">
+                    <label>Mevcut Şifren</label>
+                    <input type="password" name="eski_sifre" required placeholder="Şu an kullandığın şifre" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifren</label>
+                    <input type="password" name="yeni_sifre" required placeholder="En az 6 karakter" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label>Yeni Şifren (Tekrar)</label>
+                    <input type="password" name="yeni_sifre_tekrar" required placeholder="Yeni şifreni onayla" autocomplete="new-password">
+                </div>
+                <div class="modal-btns" style="margin-top: 30px;">
+                    <button type="button" class="btn-cancel" onclick="closePasswordModal()">İptal</button>
+                    <button type="submit" name="sifre_degistir_btn" class="btn-confirm-delete" style="background: #8a2be2; box-shadow: 0 5px 15px rgba(138,43,226,0.4);">Güncelle</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -252,9 +324,24 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
                 reader.readAsDataURL(input.files[0]);
             }
         }
+        
         function openDeleteModal() { document.getElementById('deleteModal').classList.add('active'); }
         function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('active'); }
-        window.onclick = function(e) { if (e.target == document.getElementById('deleteModal')) closeDeleteModal(); }
+        
+        function openPasswordModal() { document.getElementById('passwordModal').classList.add('active'); }
+        function closePasswordModal() { 
+            document.getElementById('passwordModal').classList.remove('active'); 
+            
+            // Eğer URL'de form gönderimi izleri varsa temizle (opsiyonel ama şık)
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+        }
+
+        window.onclick = function(e) { 
+            if (e.target == document.getElementById('deleteModal')) closeDeleteModal(); 
+            if (e.target == document.getElementById('passwordModal')) closePasswordModal(); 
+        }
     </script>
 </body>
 </html>
