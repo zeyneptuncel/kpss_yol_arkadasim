@@ -71,6 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KPSS Asistanı - Giriş</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="icon" type="image/png" href="images/favicon.png">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a0b2e 100%); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; color: #ffffff; }
         .login-container { background: rgba(20, 20, 25, 0.85); padding: 40px; border-radius: 16px; box-shadow: 0 8px 32px rgba(106, 13, 173, 0.3); border: 1px solid rgba(138, 43, 226, 0.2); width: 100%; max-width: 380px; text-align: center; backdrop-filter: blur(10px); position: relative; overflow: hidden; }

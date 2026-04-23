@@ -52,17 +52,37 @@ $benim_skorum = $skor_kendim->fetch(PDO::FETCH_ASSOC)['toplam'] ?? 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro & Skor - KPSS Yol Arkadaşım</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="icon" type="image/png" href="images/favicon.png">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0b12; color: #fff; margin: 0; display: flex; min-height: 100vh; overflow-x: hidden; }
         
         /* SAAS YAN MENÜ (SIDEBAR) - ANA SAYFAYLA BİREBİR AYNI YAPILDI */
         .sidebar { width: 260px; background: rgba(20, 20, 25, 0.95); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 30px 0; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease; box-shadow: 5px 0 20px rgba(0,0,0,0.5);}
-        .brand { text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 900; color: #d4b3ff; letter-spacing: 1px; line-height: 1.4; }
-        
+.brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90px; /* Sihirli dokunuş: Menülerin kaymasını engeller! */
+    margin-bottom: 20px; /* Profil widget'ı ile aradaki sabit boşluk */
+    width: 100%;
+}
+
+.brand img {
+    width: 250px; /* Logoyu kocaman yaptık! */
+    height: auto;
+    object-fit: contain; /* Logonun en-boy oranını bozmadan sığdırır */
+    transition: transform 0.3s ease;
+}
+
+.brand img:hover {
+    transform: scale(1.05); /* Üzerine gelince hafif büyüme efekti */
+}        
         /* Profil Widget (Mor Tasarım Korundu) */
         .user-widget { padding: 15px; margin: 0 20px 30px 20px; background: rgba(138,43,226,0.1); border-radius: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #8a2be2; cursor: pointer; transition: 0.3s;}
-        .user-widget:hover { background: rgba(138,43,226,0.2); transform: translateY(-3px); }
-        .user-widget img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #8a2be2; }
+        .user-widget:hover { background: #8a2be2; border-color: #8a2be2; transform: translateY(-3px);}
+        .user-widget img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #8a2be2; transition: 0.3s; }
+        .user-widget:hover img { border-color: #fff; }
         .user-info-sidebar { display: flex; flex-direction: column; }
         .u-name { font-weight: bold; font-size: 14px; color: #fff; }
         .u-badge { font-size: 11px; color: #d4b3ff; margin-top: 3px;}
@@ -147,7 +167,9 @@ $benim_skorum = $skor_kendim->fetch(PDO::FETCH_ASSOC)['toplam'] ?? 0;
 <body>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
-        <div class="brand">🚀 KPSS<br>Yol Arkadaşım</div>
+        <div class="brand">
+     <img src="images/dark_logo.png" alt="Logo">
+    </div>
         <div class="user-widget" onclick="window.location.href='profil.php'">
             <img src="<?= $pp_yol ?>" alt="Profil">
             <div class="user-info-sidebar">

@@ -83,11 +83,30 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Ayarları - KPSS Yol Arkadaşım</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="icon" type="image/png" href="images/favicon.png">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0b12; color: #fff; margin: 0; display: flex; min-height: 100vh; overflow-x: hidden;}
         .sidebar { width: 260px; background: rgba(20, 20, 25, 0.95); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; padding: 30px 0; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s ease;}
-        .brand { text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 900; color: #d4b3ff; letter-spacing: 1px; line-height: 1.4;}
-        .user-widget { padding: 15px; margin: 0 20px 30px 20px; background: linear-gradient(90deg, rgba(138,43,226,0.3) 0%, rgba(138,43,226,0.1) 100%); border-radius: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #8a2be2; box-shadow: 0 0 15px rgba(138,43,226,0.2);}
+.brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90px; /* Sihirli dokunuş: Menülerin kaymasını engeller! */
+    margin-bottom: 20px; /* Profil widget'ı ile aradaki sabit boşluk */
+    width: 100%;
+}
+
+.brand img {
+    width: 250px; /* Logoyu kocaman yaptık! */
+    height: auto;
+    object-fit: contain; /* Logonun en-boy oranını bozmadan sığdırır */
+    transition: transform 0.3s ease;
+}
+
+.brand img:hover {
+    transform: scale(1.05); /* Üzerine gelince hafif büyüme efekti */
+}        .user-widget { padding: 15px; margin: 0 20px 30px 20px; background: linear-gradient(90deg, rgba(138,43,226,0.3) 0%, rgba(138,43,226,0.1) 100%); border-radius: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #8a2be2; box-shadow: 0 0 15px rgba(138,43,226,0.2);}
         .user-widget img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #d4b3ff; }
         .user-info-sidebar { display: flex; flex-direction: column; }
         .nav-menu { display: flex; flex-direction: column; gap: 5px; padding: 0 20px; }
@@ -145,7 +164,9 @@ $pp_yol = ($user['profil_foto'] != 'default_pp.png' && file_exists('uploads/' . 
 <body>
 
     <div class="sidebar" id="sidebar">
-        <div class="brand">🚀 KPSS<br>Yol Arkadaşım</div>
+        <div class="brand">
+     <img src="images/dark_logo.png" alt="Logo">
+    </div>
         <div class="user-widget">
             <img src="<?= $pp_yol ?>" alt="Profil">
             <div class="user-info-sidebar">
